@@ -10,18 +10,11 @@ from ext import get_ext
 from .pull import pull
 import pygit2
 
-
 def build():
     md = markdown.Markdown(extensions=EXT)
-    print("Detecting if contents present...")
-    do_clone = not os.path.exists(AAA_CLONE_PATH)
-    if do_clone:
-        print("No contents present, cloning...")
-        pygit2.clone_repository(AAA_ORIGIN, AAA_CLONE_PATH)
-    else:
-        print("Contents already exists.")
-        print("Updating...")
-        pull(pygit2.Repository(AAA_CLONE_PATH))
+
+    os.chdir("../")
+
     try:
         print("Trying to create _book directory...")
         os.mkdir(O_NAME)
@@ -80,8 +73,10 @@ def build():
         json.dump(rjs, rjs_file)
 
     print("Rendering index...")
-    with open(os.path.join(CONTENTS_NAME, INDEX_NAME), 'r') as readme, open(f"{O_NAME}/index.html", 'w') as index:
+    with open(INDEX_NAME, 'r') as readme, open(f"{O_NAME}/index.html", 'w') as index:
         index.write(render_one(readme.read(), f"{O_NAME}/", 0, renderer, template, summary, book_json))
+
+    os.chdir("build")
     print("Done!")
 
 
